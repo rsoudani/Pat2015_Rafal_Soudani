@@ -24,7 +24,7 @@ import android.support.annotation.NonNull;
 import android.view.WindowManager;
 
 /**
- *  Created by Rafal Soudani on 14-12-2014.
+ * Created by Rafal Soudani on 14-12-2014.
  */
 public class SplashActivity extends Activity {
 
@@ -77,7 +77,7 @@ public class SplashActivity extends Activity {
                     splashTime -= 1000;
                     mHandler.postDelayed(this, 1000);
                 } else {
-                    Intent i = new Intent(SplashActivity.this, MainActivity.class);
+                    Intent i = new Intent(SplashActivity.this, LoginActivity.class);
                     startActivity(i);
                     finish();
                 }

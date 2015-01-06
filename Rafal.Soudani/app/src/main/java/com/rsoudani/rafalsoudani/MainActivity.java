@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014. The Android Open Source Project
+ * Copyright (c) 2015. The Android Open Source Project
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,11 +16,14 @@
 
 package com.rsoudani.rafalsoudani;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.view.View;
+import android.widget.Button;
 
 /**
- *  Created by Rafal Soudani on 14-12-2014.
+ * Created by Rafal Soudani on 06-01-2015.
  */
 public class MainActivity extends ActionBarActivity {
 
@@ -28,5 +31,14 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Button logout = (Button) findViewById(R.id.logout);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
     }
 }
