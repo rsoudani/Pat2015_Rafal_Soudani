@@ -20,12 +20,13 @@
     <string name="app_name">Rafal Soudani</string>
     <string name="splashLogo">Splash Logo</string>
     <string name="ok_button">OK</string>
-    <string name="empty_email">Email nie może być pusty</string>
     <string name="invalid_email">Niepoprawny email</string>
     <string name="log_out_button">Wyloguj</string>
     <string name="password_validation">Minimum 8 znaków, co najmniej jedna wielka litera, jedna mała litera oraz jedna cyfra</string>
-    <string name="main_screen">Main Screen</string>
     <string name="e_mail">e-mail</string>
     <string name="password">hasło</string>
+    <string name="image_content_description">Image from json url</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
 
 </resources>

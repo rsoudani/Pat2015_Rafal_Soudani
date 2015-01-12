@@ -26,7 +26,7 @@ import android.widget.EditText;
 import java.util.regex.Pattern;
 
 /**
- * Created by Rafal Soudani on 14-12-2014.
+ *  Created by Rafal Soudani on 12-01-2015.
  */
 public class LoginActivity extends ActionBarActivity {
 

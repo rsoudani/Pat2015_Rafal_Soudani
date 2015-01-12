@@ -24,7 +24,7 @@ import android.support.annotation.NonNull;
 import android.view.WindowManager;
 
 /**
- * Created by Rafal Soudani on 14-12-2014.
+ *  Created by Rafal Soudani on 12-01-2015.
  */
 public class SplashActivity extends Activity {
 
