@@ -37,52 +37,58 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
- *  Created by Rafal Soudani on 11-01-2015.
+ * Created by Rafal Soudani on 11-01-2015.
  */
 public class MainActivity extends ActionBarActivity {
 
     public static final String BASE_SERVER_URL = "http://192.168.1.12:8080";
     public static final String DOWNLOAD_IMAGE_FILTER =
             "com.rsoudani.rafalsoudani.DOWNLOAD_IMAGE_COMPLETE";
+    private final IntentFilter filter_image =
+            new IntentFilter(DOWNLOAD_IMAGE_FILTER);
     public static final String DOWNLOAD_JSON_FILTER =
             "com.rsoudani.rafalsoudani.DOWNLOAD_JSON_COMPLETE";
-
-    private static String fileName = "page_0.json";
+    private final IntentFilter filter_json =
+            new IntentFilter(DOWNLOAD_JSON_FILTER);
     private static final String LIST_INSTANCE_STATE = "list_state";
+    private static String fileName = "page_0.json";
+    private final BroadcastReceiver jsonDownloadedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context arg0, Intent arg1) {
+            JSONParser jsonParser = new JSONParser(MainActivity.this, fileName);
+            jsonParser.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            checkAllImagesDownloaded();
+        }
+    };
     private static boolean isLoading = false;
+    private final BroadcastReceiver imageDownloadedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context arg0, Intent arg1) {
+            adapter.notifyDataSetChanged();
+
+
+            int firstVisiblePosition = lv.getFirstVisiblePosition();
+            Item item = items.get(firstVisiblePosition+1);
+            int i = 1;
+            while (item.getImage() != null) {
+                i++;
+                if ((firstVisiblePosition + i) < items.size()) {
+                    item = items.get(firstVisiblePosition + i);
+                } else {
+                    checkAllImagesDownloaded();
+                    break;
+                }
+            }
+            if (item.getImage() == null) {
+                item.loadImage(getApplicationContext());
+            }
+
+        }
+    };
     private DownloadTask downloadTask;
     private ArrayList<Item> items;
     private ListView lv;
     private MyAdapter adapter;
-
-
-    private final IntentFilter filter_image =
-            new IntentFilter(DOWNLOAD_IMAGE_FILTER);
-    private final IntentFilter filter_json =
-            new IntentFilter(DOWNLOAD_JSON_FILTER);
-
-    private final BroadcastReceiver imageDownloadedReceiver = new BroadcastReceiver(){
-        @Override
-        public void onReceive(Context arg0, Intent arg1) {
-            adapter.notifyDataSetChanged();
-        }
-    };
-
-    private final BroadcastReceiver jsonDownloadedReceiver = new BroadcastReceiver(){
-        @Override
-        public void onReceive(Context arg0, Intent arg1) {
-                JSONParser jsonParser = new JSONParser(MainActivity.this, fileName);
-                jsonParser.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-        }
-    };
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        registerReceiver(imageDownloadedReceiver, filter_image);
-        registerReceiver(jsonDownloadedReceiver, filter_json);
-    }
 
     private static String getFileName() {
         return fileName;
@@ -97,13 +103,28 @@ public class MainActivity extends ActionBarActivity {
         MainActivity.isLoading = false;
     }
 
+    private void checkAllImagesDownloaded() {
+        for (Item item : items) {
+            if (item.getImage() == null) {
+                item.loadImage(getApplicationContext());
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        registerReceiver(imageDownloadedReceiver, filter_image);
+        registerReceiver(jsonDownloadedReceiver, filter_json);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         setVariables();
-
 
 
         if (savedInstanceState != null) {
@@ -156,16 +177,16 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void startDownload() {
-        downloadTask = new DownloadTask(this , MainActivity.getFileName());
+        downloadTask = new DownloadTask(this, MainActivity.getFileName());
         downloadTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         isLoading = true;
     }
 
     private class JSONParser extends AsyncTask<String, String, ArrayList<Item>> {
 
+        private final String fileName;
         private ProgressDialog progressDialog;
         private Context context = null;
-        private final String fileName;
 
         public JSONParser(Context context, String fileName) {
             this.context = context;
@@ -198,7 +219,6 @@ public class MainActivity extends ActionBarActivity {
                     String url = singleObject.getString("url");
 
                     Item item = new Item(title, desc, url);
-                    item.loadImage(getApplicationContext());
 
                     items.add(item);
                 }
@@ -216,6 +236,8 @@ public class MainActivity extends ActionBarActivity {
             progressDialog.dismiss();
 
             adapter.notifyDataSetChanged();
+            Item item = items.get(0);
+            item.loadImage(getApplicationContext());
 
             lv.setOnScrollListener(new EndlessScrollListener(MainActivity.this));
 

@@ -97,12 +97,14 @@ class ImageDownloaderTask extends AsyncTask<String, String, Bitmap> {
         super.onPostExecute(bitmap);
         if (bitmap != null) {
             mItem.setImage(bitmap);
-
+        }else {
+            mItem.setImage(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.nophoto));
+        }
             Intent intent = new Intent();
             intent.setAction(MainActivity.DOWNLOAD_IMAGE_FILTER);
             mContext.sendBroadcast(intent);
 
-        }
+
     }
 
 }

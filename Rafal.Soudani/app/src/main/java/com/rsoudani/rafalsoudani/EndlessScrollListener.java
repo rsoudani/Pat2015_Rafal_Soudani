@@ -61,6 +61,7 @@ class EndlessScrollListener implements AbsListView.OnScrollListener {
     public static void resetListener() {
         fileNumber = 0;
         previousTotal = 0;
+        lastPage = false;
     }
 
     public static void setLoadingToFalse() {
